@@ -222,7 +222,7 @@ func newPrometheus(
 	if ms.Spec.PrometheusConfig.WebTLSConfig != nil {
 		tlsConfig := ms.Spec.PrometheusConfig.WebTLSConfig
 
-		prometheus.Spec.CommonPrometheusFields.Web = &monv1.PrometheusWebSpec{
+		prometheus.Spec.Web = &monv1.PrometheusWebSpec{
 			WebConfigFileFields: monv1.WebConfigFileFields{
 				TLSConfig: &monv1.WebTLSConfig{
 					KeySecret: corev1.SecretKeySelector{
@@ -247,7 +247,7 @@ func newPrometheus(
 	}
 
 	if prometheusCfg.Image != "" {
-		prometheus.Spec.CommonPrometheusFields.Image = ptr.To(prometheusCfg.Image)
+		prometheus.Spec.Image = ptr.To(prometheusCfg.Image)
 	}
 
 	if !ms.Spec.AlertmanagerConfig.Disabled {

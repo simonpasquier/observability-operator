@@ -8,7 +8,6 @@ import (
 	monv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
-	v1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
@@ -269,10 +268,10 @@ func newHealthAnalyzerServiceMonitor(namespace string) *monv1.ServiceMonitor {
 
 // newComponentHealthConfig creates a new ConfigMap
 // that defines the components whose health is evaluated.
-func newComponentHealthConfig(namespace string) *v1.ConfigMap {
-	cm := v1.ConfigMap{
+func newComponentHealthConfig(namespace string) *corev1.ConfigMap {
+	cm := corev1.ConfigMap{
 		TypeMeta: metav1.TypeMeta{
-			APIVersion: v1.SchemeGroupVersion.String(),
+			APIVersion: corev1.SchemeGroupVersion.String(),
 			Kind:       "ConfigMap",
 		},
 		ObjectMeta: metav1.ObjectMeta{

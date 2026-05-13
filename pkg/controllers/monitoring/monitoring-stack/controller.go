@@ -138,7 +138,7 @@ func (rm resourceManager) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 	}
 
 	// Check if the plugin is being deleted
-	if !ms.ObjectMeta.DeletionTimestamp.IsZero() {
+	if !ms.DeletionTimestamp.IsZero() {
 		logger.V(6).Info("removing cluster scoped resources")
 
 		reconcilers := stackComponentCleanup(ms)

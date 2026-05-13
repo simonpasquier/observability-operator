@@ -89,7 +89,7 @@ func getReconcilers(ctx context.Context, k8sClient client.Client, k8sReader clie
 	instanceObjects = append(instanceObjects, otelcolTempoRBACBinding)
 	instanceObjects = append(instanceObjects, uiPlugin())
 
-	if instance.ObjectMeta.DeletionTimestamp != nil {
+	if instance.DeletionTimestamp != nil {
 		for _, obj := range instanceObjects {
 			reconcilers = append(reconcilers, reconciler.NewDeleter(obj))
 		}
@@ -117,7 +117,7 @@ func getReconcilers(ctx context.Context, k8sClient client.Client, k8sReader clie
 	}
 
 	// Install operators and instances
-	if instance.Spec.Capabilities != nil && instance.Spec.Capabilities.Tracing.CommonCapabilitiesSpec.Enabled {
+	if instance.Spec.Capabilities != nil && instance.Spec.Capabilities.Tracing.Enabled {
 		// install operators and instances
 		if operatorsStatus.ShouldInstall("opentelemetry") {
 			reconcilers = append(reconcilers, reconciler.NewCreateUpdateReconciler(otelSubs, instance))
@@ -134,7 +134,7 @@ func getReconcilers(ctx context.Context, k8sClient client.Client, k8sReader clie
 	}
 	// install operators only
 	if instance.Spec.Capabilities != nil &&
-		(instance.Spec.Capabilities.Tracing.CommonCapabilitiesSpec.Operators.Install != nil && *instance.Spec.Capabilities.Tracing.CommonCapabilitiesSpec.Operators.Install) {
+		(instance.Spec.Capabilities.Tracing.Operators.Install != nil && *instance.Spec.Capabilities.Tracing.Operators.Install) {
 		// install operators only
 		if operatorsStatus.ShouldInstall("opentelemetry") {
 			reconcilers = append(reconcilers, reconciler.NewCreateUpdateReconciler(otelSubs, instance))

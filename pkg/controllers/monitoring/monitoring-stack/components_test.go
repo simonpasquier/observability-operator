@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	monv1 "github.com/rhobs/obo-prometheus-operator/pkg/apis/monitoring/v1"
-	v1 "github.com/rhobs/obo-prometheus-operator/pkg/apis/monitoring/v1"
 	"gotest.tools/v3/assert"
 	"gotest.tools/v3/golden"
 	corev1 "k8s.io/api/core/v1"
@@ -33,7 +32,7 @@ func TestStorageSpec(t *testing.T) {
 		{
 			pvc: validPVCSpec,
 			expected: &monv1.StorageSpec{
-				VolumeClaimTemplate: v1.EmbeddedPersistentVolumeClaim{
+				VolumeClaimTemplate: monv1.EmbeddedPersistentVolumeClaim{
 					Spec: *validPVCSpec,
 				},
 			},

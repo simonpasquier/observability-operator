@@ -9,13 +9,13 @@ import (
 	"net"
 	"net/http"
 	"os/exec"
+	"slices"
 	"strings"
 	"testing"
 	"time"
 
 	"github.com/google/go-cmp/cmp"
 	monv1 "github.com/rhobs/obo-prometheus-operator/pkg/apis/monitoring/v1"
-	"golang.org/x/exp/slices"
 	"gotest.tools/v3/assert"
 	corev1 "k8s.io/api/core/v1"
 	policyv1 "k8s.io/api/policy/v1"
@@ -858,9 +858,7 @@ func assertPrometheusManagedFields(t *testing.T) {
 
 	mfs := prom.GetManagedFields()
 
-	idx := slices.IndexFunc(mfs, func(mf metav1.ManagedFieldsEntry) bool {
-		return mf.Manager == util.OpName
-	})
+	idx := slices.IndexFunc([]metav1.ManagedFieldsEntry(mfs), (func(metav1.ManagedFieldsEntry) bool)(func(mf metav1.ManagedFieldsEntry) bool { return mf.Manager == util.OpName }))
 
 	if idx == -1 {
 		t.Fatal(fmt.Errorf("no fields managed by observability-operator found"))

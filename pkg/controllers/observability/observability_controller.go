@@ -151,7 +151,7 @@ func (o observabilityInstallerController) Reconcile(ctx context.Context, request
 	}
 
 	// We have a deletion, short circuit and let the deletion happen
-	if instance.ObjectMeta.DeletionTimestamp != nil {
+	if instance.DeletionTimestamp != nil {
 		if controllerutil.ContainsFinalizer(instance, finalizerName) {
 			// Once all finalizers have been
 			// removed, the object will be deleted.

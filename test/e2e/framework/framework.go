@@ -17,7 +17,6 @@ import (
 	"golang.org/x/mod/semver"
 	appsv1 "k8s.io/api/apps/v1"
 	corev1 "k8s.io/api/core/v1"
-	v1 "k8s.io/api/core/v1"
 	policyv1 "k8s.io/api/policy/v1"
 	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -57,7 +56,7 @@ func (f *Framework) Setup() error {
 
 	// Load the service CA operator's certificate authority.
 	var (
-		cm  v1.ConfigMap
+		cm  corev1.ConfigMap
 		key = client.ObjectKey{
 			Namespace: "openshift-config",
 			Name:      "openshift-service-ca.crt",
@@ -79,7 +78,7 @@ func (f *Framework) Setup() error {
 	f.RootCA = rootCA
 
 	// Load the prometheus-k8s TLS client certificate.
-	var s v1.Secret
+	var s corev1.Secret
 	key = client.ObjectKey{
 		Namespace: "openshift-monitoring",
 		Name:      "metrics-client-certs",
@@ -187,7 +186,7 @@ func (f *Framework) GetStatefulSetPods(name string, namespace string) ([]corev1.
 		return nil, err
 	}
 
-	selector := svc.Spec.Template.ObjectMeta.Labels
+	selector := svc.Spec.Template.Labels
 	var pods corev1.PodList
 	if err := f.K8sClient.List(context.Background(), &pods, client.MatchingLabels(selector)); err != nil {
 		return nil, err

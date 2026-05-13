@@ -15,7 +15,6 @@ import (
 	v1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
-	"k8s.io/apimachinery/pkg/api/meta"
 	metaerrors "k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -223,7 +222,7 @@ func (rm resourceManager) Reconcile(ctx context.Context, req ctrl.Request) (ctrl
 	}
 
 	// Check if the plugin is being deleted
-	if !plugin.ObjectMeta.DeletionTimestamp.IsZero() {
+	if !plugin.DeletionTimestamp.IsZero() {
 		logger.V(6).Info("deregistering plugin from the console")
 		if err := rm.deregisterPluginFromConsole(ctx, pluginTypeToConsoleName[plugin.Spec.Type]); err != nil {
 			logger.V(3).Info("best-effort console deregistration failed during deletion", "error", err)
@@ -307,14 +306,14 @@ func (rm resourceManager) updateStatus(ctx context.Context, req ctrl.Request, pl
 	var changed bool
 
 	if recError != nil {
-		changed = meta.SetStatusCondition(&pl.Status.Conditions, metav1.Condition{
+		changed = metaerrors.SetStatusCondition(&pl.Status.Conditions, metav1.Condition{
 			Type:               string(uiv1alpha1.DegradedCondition),
 			Status:             metav1.ConditionTrue,
 			Reason:             FailedToReconcileReason,
 			Message:            recError.Error(),
 			ObservedGeneration: pl.Generation,
 		}) || changed
-		changed = meta.SetStatusCondition(&pl.Status.Conditions, metav1.Condition{
+		changed = metaerrors.SetStatusCondition(&pl.Status.Conditions, metav1.Condition{
 			Type:               string(uiv1alpha1.ReconciledCondition),
 			Status:             metav1.ConditionFalse,
 			Reason:             FailedToReconcileReason,
@@ -322,28 +321,28 @@ func (rm resourceManager) updateStatus(ctx context.Context, req ctrl.Request, pl
 			ObservedGeneration: pl.Generation,
 		}) || changed
 
-		changed = meta.SetStatusCondition(&pl.Status.Conditions, metav1.Condition{
+		changed = metaerrors.SetStatusCondition(&pl.Status.Conditions, metav1.Condition{
 			Type:               string(uiv1alpha1.AvailableCondition),
 			Status:             metav1.ConditionFalse,
 			Reason:             FailedToReconcileReason,
 			ObservedGeneration: pl.Generation,
 		}) || changed
 	} else {
-		changed = meta.SetStatusCondition(&pl.Status.Conditions, metav1.Condition{
+		changed = metaerrors.SetStatusCondition(&pl.Status.Conditions, metav1.Condition{
 			Type:               string(uiv1alpha1.ReconciledCondition),
 			Status:             metav1.ConditionTrue,
 			Reason:             ReconciledReason,
 			Message:            ReconciledMessage,
 			ObservedGeneration: pl.Generation,
 		}) || changed
-		changed = meta.SetStatusCondition(&pl.Status.Conditions, metav1.Condition{
+		changed = metaerrors.SetStatusCondition(&pl.Status.Conditions, metav1.Condition{
 			Type:               string(uiv1alpha1.DegradedCondition),
 			Status:             metav1.ConditionFalse,
 			Reason:             ReconciledReason,
 			ObservedGeneration: pl.Generation,
 		}) || changed
 
-		changed = meta.SetStatusCondition(&pl.Status.Conditions, metav1.Condition{
+		changed = metaerrors.SetStatusCondition(&pl.Status.Conditions, metav1.Condition{
 			Type:               string(uiv1alpha1.AvailableCondition),
 			Status:             metav1.ConditionTrue,
 			Reason:             AvailableReason,

@@ -193,7 +193,7 @@ func newThanosQuerierDeployment(
 		for name, hash := range tlsHashes {
 			tlsAnnotations[fmt.Sprintf("monitoring.openshift.io/%s-hash", name)] = hash
 		}
-		thanos.ObjectMeta.Annotations = tlsAnnotations
+		thanos.Annotations = tlsAnnotations
 	}
 
 	return thanos

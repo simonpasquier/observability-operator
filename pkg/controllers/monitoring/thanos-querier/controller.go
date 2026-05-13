@@ -231,7 +231,7 @@ func (rm resourceManager) hashOfTLSSecret(selector msoapi.SecretKeySelector, nam
 		Namespace: namespace,
 	}, &secret)
 	if err != nil {
-		return "", fmt.Errorf("Couldn't get TLS secret %s: %s", selector.Name, err)
+		return "", fmt.Errorf("couldn't get TLS secret %s: %s", selector.Name, err)
 	}
 
 	hash := sha256.Sum256(secret.Data[selector.Key])
@@ -291,7 +291,7 @@ func (rm resourceManager) findQueriersForTLSSecrets(ctx context.Context, src cli
 			FieldSelector: fields.OneTermEqualSelector(field, src.GetName()),
 			Namespace:     src.GetNamespace(),
 		}
-		err := rm.Client.List(ctx, crList, listOps)
+		err := rm.List(ctx, crList, listOps)
 		if err != nil {
 			rm.logger.Error(err, "Failed to list Thanosqueriers")
 			return []reconcile.Request{}
