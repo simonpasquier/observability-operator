@@ -21,9 +21,11 @@ import (
 	monv1 "github.com/rhobs/obo-prometheus-operator/pkg/apis/monitoring/v1"
 	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/core/v1"
+	eventsv1 "k8s.io/api/events/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -692,6 +694,20 @@ func (f *Framework) AssertNoEventWithReason(t *testing.T, reason string) {
 	})
 	if err != nil {
 		t.Fatalf("unexpected error: %s", err)
+	}
+
+	// Filter events about COO resources only otherwise the test might trip
+	// over events unrelated to the operator.
+	var events []eventsv1.Event
+	for _, evt := range evts.Items {
+		gv, err := schema.ParseGroupVersion(evt.Regarding.APIVersion)
+		if err != nil {
+			t.Logf("failed to parse groupVersion for %q: %v", evt.Regarding.APIVersion)
+			continue
+		}
+		if gv.Group == v1alpha1.GroupVersion.Group {
+			events = append(events, evt)
+		}
 	}
 
 	if len(evts.Items) > 0 {
